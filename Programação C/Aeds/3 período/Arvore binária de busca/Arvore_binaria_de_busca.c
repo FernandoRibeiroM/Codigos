@@ -1,0 +1,319 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#define true 1
+#define false 0
+
+typedef struct
+{
+    int num;
+} t_elemento;
+
+typedef struct s_no t_no;
+
+struct s_no
+{
+    t_no *esq;
+    t_elemento dado;
+    t_no *dir;
+};
+
+typedef t_no *t_arvore;
+
+int menu(void);
+t_no *criaNo(void);
+int isVazia(t_no *no);
+int compara(t_elemento item1, t_elemento item2);
+t_no *busca(t_arvore raiz, t_elemento dado);
+t_no *buscaSetPai(t_arvore raiz, t_elemento dado, t_no **pai);
+int inserir(t_arvore *raiz, t_elemento item);
+int remover(t_arvore *raiz, t_elemento item);
+void esvaziar(t_arvore *raiz);
+void exibirPreOrdem(t_arvore raiz);
+void exibirInOrdem(t_arvore raiz);
+void exibirPosOrdem(t_arvore raiz);
+
+int main()
+{
+    int op = 0;
+    t_elemento dado;
+    t_arvore raiz = NULL;
+    do
+    {
+        op = menu();
+        system("cls");
+        switch (op)
+        {
+        case 1: // INSERIR
+        {
+            printf("\t\tINSERIR\n\n");
+            printf("Digite o numero que deseja inserir: ");
+            scanf("%d", &dado.num);
+            if (inserir(&raiz, dado) == true)
+                printf("\nDADO INSERIDO COM SUCESSO!\n\n");
+            else
+                printf("\nERRO AO INSERIDO O DADO!\n\n");
+            system("pause");
+            break;
+        }
+        case 2: // REMOVER
+        {
+            printf("\t\tREMOVER\n\n");
+            printf("Digite o numero que deseja remover: ");
+            scanf("%d", &dado.num);
+            if (remover(&raiz, dado) == true)
+                printf("O NUMERO FOI REMOVIDO COM SUCESSO!\n\n");
+            else
+                printf("O NUMERO NAO PODE SER REMOVIDO!\n\n");
+            system("pause");
+            break;
+        }
+        case 3: // PROCURAR
+        {
+            printf("\t\tPROCURAR\n\n");
+            printf("Digite o numero que deseja procurar: ");
+            scanf("%d", &dado.num);
+            if (busca(raiz, dado) != NULL)
+                printf("O NUMERO INFORMADO ENCONTRA-SE NA ARVORE!\n\n");
+            else
+                printf("O NUMERO INFORMADO NAO ENCONTRA-SE NA ARVORE!\n\n");
+            system("pause");
+            break;
+        }
+        case 4: // ESVAZIAR
+        {
+            esvaziar(&raiz);
+            printf("A ARVORE FOI ESVAZIADA COM SUCESSO!\n\n");
+            system("pause");
+            break;
+        }
+        case 5: // EXIBIR
+        {
+            printf("\t\tEXIBICAO PRE ORDEM\n");
+            exibirPreOrdem(raiz);
+            printf("\n\n");
+            printf("\t\tEXIBICAO IN ORDEM\n");
+            exibirInOrdem(raiz);
+            printf("\n\n");
+            printf("\t\tEXIBICAO POS ORDEM\n");
+            exibirPosOrdem(raiz);
+            printf("\n\n\n");
+            system("pause");
+            break;
+        }
+        case 0: // SAIR
+        {
+            printf("SAINDO");
+            break;
+        }
+        }
+    } while (op != 0);
+    return 0;
+}
+
+int menu(void)
+{
+    int op = 0;
+    system("cls");
+    printf("\t\tMenu\n");
+    printf("\t1 - INSERIR\n");
+    printf("\t2 - REMOVER\n");
+    printf("\t3 - PESQUISAR\n");
+    printf("\t4 - ESVAZIAR\n");
+    printf("\t5 - EXIBIR\n");
+    printf("\t0 - SAIR\n\n");
+    printf("\tDIGITE SUA OPCAO: ");
+    scanf("%d", &op);
+    fflush(stdin);
+    if ((op < 0) || (op > 5))
+        op = menu();
+    return op;
+}
+
+t_no *criaNo(void)
+{
+    t_no *novo = NULL;
+    novo = (t_no *)malloc(sizeof(t_no));
+    if (novo != NULL)
+    {
+        novo->esq = novo->dir = NULL;
+        novo->dado.num = 0;
+    }
+    return novo;
+}
+
+int isVazia(t_no *no)
+{
+    int result = true;
+    if (no == NULL)
+        result = false;
+
+    return result;
+}
+
+int compara(t_elemento item1, t_elemento item2)
+{
+    int result = 0;
+    if (item1.num > item2.num)
+        result = 1;
+    else if (item1.num < item2.num)
+        result = -1;
+
+    return result;
+}
+
+t_no *busca(t_arvore raiz, t_elemento dado)
+{
+    t_no *no = NULL;
+    if (raiz != NULL)
+    {
+        if (compara(raiz->dado, dado) == 0)
+            no = raiz;
+        else
+        {
+            no = busca(raiz->esq, dado);
+
+            if (no == NULL)
+                no = busca(raiz->dir, dado);
+        }
+    }
+    return no;
+}
+
+t_no *buscaSetPai(t_arvore raiz, t_elemento dado, t_no **pai)
+{
+    t_no *no = NULL;
+
+    if (raiz == NULL)
+        *pai = NULL;
+    else
+    {
+        if (compara(raiz->dado, dado) == 0)
+            no = raiz;
+        else
+        {
+            *pai = raiz;
+
+            if (compara(raiz->dado, dado) > 0)
+                no = buscaSetPai(raiz->esq, dado, pai);
+            else
+                no = buscaSetPai(raiz->dir, dado, pai);
+        }
+    }
+    return no;
+}
+
+int inserir(t_arvore *raiz, t_elemento item)
+{
+    int result = false;
+    if (*raiz == NULL)
+    {
+        *raiz = criaNo();
+
+        if (*raiz != NULL)
+        {
+            (*raiz)->dado = item;
+            result = true;
+        }
+    }
+    else
+    {
+        if (compara((*raiz)->dado, item) > 0)
+            result = inserir(&((*raiz)->esq), item);
+        else if (compara((*raiz)->dado, item) < 0)
+            result = inserir(&((*raiz)->dir), item);
+    }
+    return result;
+}
+
+int remover(t_arvore *raiz, t_elemento item)
+{
+    int result = false;
+    t_no *no, *pai, *sub, *paiSuc, *suc;
+    no = pai = sub = paiSuc = suc = NULL;
+    no = buscaSetPai(*raiz, item, &pai);
+    if (no != NULL)
+    {
+        if (no->esq == NULL)
+            sub = no->dir;
+        else
+        {
+            if (no->dir == NULL)
+                sub = no->esq;
+            else
+            {
+                paiSuc = no;
+                sub = no->dir;
+                suc = sub->esq;
+                while (suc != NULL)
+                {
+                    paiSuc = sub;
+                    sub = suc;
+                    suc = sub->esq;
+                }
+                if (paiSuc != no)
+                {
+                    paiSuc->esq = sub->dir;
+                    sub->dir = no->dir;
+                }
+                sub->esq = no->esq;
+            }
+        }
+
+        if (pai == NULL)
+            *raiz = sub;
+        else
+        {
+            if (no == pai->esq)
+                pai->esq = sub;
+            else
+                pai->dir = sub;
+
+            free(no);
+            result = true;
+        }
+    }
+
+    return result;
+}
+
+void esvaziar(t_arvore *raiz)
+{
+    if (*raiz != NULL)
+    {
+        esvaziar(&(*raiz)->esq);
+        esvaziar(&(*raiz)->dir);
+        free(*raiz);
+        *raiz = NULL;
+    }
+}
+
+void exibirPreOrdem(t_arvore raiz)
+{
+    if (raiz != NULL)
+    {
+        printf("%d ", raiz->dado.num);
+        exibirPreOrdem(raiz->esq);
+        exibirPreOrdem(raiz->dir);
+    }
+}
+
+void exibirInOrdem(t_arvore raiz)
+{
+    if (raiz != NULL)
+    {
+        exibirInOrdem(raiz->esq);
+        printf("%d ", raiz->dado.num);
+        exibirInOrdem(raiz->dir);
+    }
+}
+
+void exibirPosOrdem(t_arvore raiz)
+{
+    if (raiz != NULL)
+    {
+        exibirPosOrdem(raiz->esq);
+        exibirPosOrdem(raiz->dir);
+        printf("%d ", raiz->dado.num);
+    }
+}

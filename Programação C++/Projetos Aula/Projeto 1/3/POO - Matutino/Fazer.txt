@@ -1,0 +1,21 @@
+criar forma de imprimir os valores:
+	Curso 
+
+	string nome;
+	int duracao;
+	char turno;
+	disciplina *listDisciplina[QUANT_DISC]; 
+
+		Disciplinas cursadas
+	
+	disciplina *disc;
+	float nota;
+	float frequencia;
+	
+		Disciplinas 
+
+	string nome;
+	int carga_horaria;
+	int creditos;
+
+pode ser feito dentro da sua respectiva classe, de forma semelhante ao q já tenho de aluno

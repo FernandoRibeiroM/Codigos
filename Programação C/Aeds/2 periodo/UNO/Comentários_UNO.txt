@@ -1,0 +1,5 @@
+PRoblemas em 
+Criacao_Cartas
+Cartas_Na_Pilha
+
+
