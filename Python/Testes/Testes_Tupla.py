@@ -1,0 +1,5 @@
+Tupla = ('Um',)  # Tupla com um elemento  (OBS: é necessário colocar a vírgula no final, pois caso não tenha ele acaba por ser considerado uma string)
+print(type(Tupla))
+print(Tupla)
+Tupla = ('Um', 'Dois', 'Três', 'Quatro', 'Cinco')
+print(Tupla)
